@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener {
+public class AnotherCalcActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener {
 
     private EditText numberInput1;
     private EditText numberInput2;
@@ -26,9 +26,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher, View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.calcButton1).setOnClickListener(this);
-        findViewById(R.id.calcButton2).setOnClickListener(this);
-        findViewById(R.id.nextButton).setOnClickListener(this);
+        findViewById(R.id.backButton).setOnClickListener(this);
 
         numberInput1 = (EditText)findViewById(R.id.numberInput1);
         numberInput1.addTextChangedListener(this);
@@ -65,25 +63,16 @@ public class MainActivity extends AppCompatActivity implements TextWatcher, View
     @Override
     public void onClick(View v) {
         // タップされたときの処理を実装する
-        int id = v.getId();
 
-        switch (id) {
-            case R.id.calcButton1:
-                Intent intent1 = new Intent(this, AnotherCalcActivity.class);
-                startActivityForResult(intent1, REQUEST_CODE_ANOTHER_CALC_1);
-                break;
-            case R.id.calcButton2:
-                Intent intent2 = new Intent(this, AnotherCalcActivity.class);
-                startActivityForResult(intent2, REQUEST_CODE_ANOTHER_CALC_2);
-                break;
-            case R.id.nextButton:
-                if (checkEditTextInput()) {
-                    int result = calc();
-                    numberInput1.setText(String.valueOf(result));
-                    refreshResult();
-                }
-                break;
+        if (!checkEditTextInput()) {
+            setResult(RESULT_CANCELED);
+        } else {
+            int result = calc();
+            Intent data = new Intent();
+            data.putExtra("result", result);
+            setResult(RESULT_OK, data);
         }
+        finish();
     }
 
     @Override
